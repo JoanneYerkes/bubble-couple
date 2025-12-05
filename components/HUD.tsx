@@ -24,44 +24,44 @@ const HUD: React.FC<HUDProps> = ({ hudState, onNextLevel }) => {
   const p2 = hudState.players.find(p => p.id === 2);
 
   const renderPlayerStats = (p: any, label: string, alignRight: boolean = false) => (
-    <div className={`flex items-center gap-4 ${p.state === PlayerState.DEAD ? 'opacity-50 grayscale' : ''} ${alignRight ? 'flex-row-reverse' : ''}`}>
+    <div className={`flex items-center gap-4 ${p.state === PlayerState.DEAD ? 'grayscale opacity-60' : ''} ${alignRight ? 'flex-row-reverse' : ''}`}>
        {/* Avatar */}
        <div className="relative">
-          <div className="w-10 h-10 rounded-full border-2 border-white shadow-lg" style={{ backgroundColor: p.color }}></div>
+          <div 
+            className="w-12 h-12 border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]" 
+            style={{ backgroundColor: p.color }}
+          ></div>
           {p.state === PlayerState.TRAPPED && (
-             <span className="absolute -top-1 -right-1 flex h-4 w-4">
-               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-               <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
-             </span>
+             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-black px-1 border border-black animate-bounce">SOS</span>
           )}
        </div>
 
        {/* Stats Block */}
        <div className={`flex flex-col ${alignRight ? 'items-end' : 'items-start'}`}>
-          <div className="flex items-center gap-2 mb-0.5">
-              <span className="font-bold text-white text-sm tracking-wide">{label}</span>
-              <div className="flex items-center gap-1 bg-black/40 px-1.5 rounded text-xs text-yellow-400 border border-yellow-500/30">
-                  <Star size={10} fill="currentColor" />
+          <div className="flex items-center gap-2 mb-1">
+              <span className="font-black text-black text-sm bg-white border border-black px-1 uppercase">{label}</span>
+              <div className="flex items-center gap-1 bg-yellow-300 px-1.5 border border-black font-bold text-xs text-black">
+                  <Star size={10} fill="black" strokeWidth={3} />
                   <span>{p.score}</span>
               </div>
           </div>
           
           {p.state === PlayerState.TRAPPED ? (
-              <div className="text-red-400 font-bold text-xs animate-pulse">
-                  HELP! {(p.trappedTimer / 1000).toFixed(1)}s
+              <div className="text-red-600 font-black text-sm animate-pulse bg-red-100 px-1 border border-red-600">
+                  TRAPPED {(p.trappedTimer / 1000).toFixed(1)}s
               </div>
           ) : p.state === PlayerState.DEAD ? (
-              <div className="text-gray-500 font-bold text-xs flex items-center gap-1">
-                  <Skull size={12}/> ELIMINATED
+              <div className="text-gray-500 font-black text-sm bg-gray-200 px-1 border border-gray-500">
+                  ELIMINATED
               </div>
           ) : (
-              <div className="flex gap-3 text-xs text-slate-300">
-                  <div className="flex items-center gap-1 bg-slate-800 px-1.5 py-0.5 rounded">
-                      <Bomb size={12} className="text-yellow-400" />
+              <div className="flex gap-2 text-xs font-bold text-black">
+                  <div className="flex items-center gap-1 bg-gray-100 border border-black px-1">
+                      <Bomb size={12} className="text-black" />
                       <span>{p.activeBombs}/{p.maxBombs}</span>
                   </div>
-                  <div className="flex items-center gap-1 bg-slate-800 px-1.5 py-0.5 rounded">
-                      <Zap size={12} className="text-blue-400" />
+                  <div className="flex items-center gap-1 bg-gray-100 border border-black px-1">
+                      <Zap size={12} className="text-black" />
                       <span>{p.bombRange}</span>
                   </div>
               </div>
@@ -72,34 +72,34 @@ const HUD: React.FC<HUDProps> = ({ hudState, onNextLevel }) => {
 
   return (
     <div 
-      className="w-full bg-slate-900 border-b-4 border-slate-700 flex items-center justify-between px-6 shadow-md z-10 relative"
+      className="w-full bg-[#E0E7F1] flex items-center justify-between px-6 z-10 relative select-none"
       style={{ height: HEADER_HEIGHT }}
     >
         {/* P1 Stats */}
         <div className="flex-1">
-            {p1 && renderPlayerStats(p1, "YOU (P1)")}
+            {p1 && renderPlayerStats(p1, "P1 (YOU)")}
         </div>
         
         {/* Center: Timer & Controls */}
         <div className="flex items-center gap-4">
              <button 
                 onClick={toggleMute}
-                className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                className="w-10 h-10 flex items-center justify-center bg-white border-[3px] border-black hover:bg-gray-100 active:translate-y-1 active:shadow-none shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
              >
-                 {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                 {isMuted ? <VolumeX size={20} className="text-black" /> : <Volume2 size={20} className="text-black" />}
              </button>
 
              <div className="flex flex-col items-center justify-center">
                  {/* Level Indicator */}
-                 <div className="flex items-center gap-1 text-slate-400 text-xs font-bold mb-1">
+                 <div className="flex items-center gap-1 bg-black text-white px-2 py-0.5 text-xs font-bold mb-1 border border-black -rotate-1">
                      <Flag size={10} />
                      <span>STAGE {hudState.level}</span>
                  </div>
 
-                 <div className="flex flex-col items-center justify-center bg-slate-800 px-6 py-1 rounded-lg border border-slate-700 shadow-inner">
+                 <div className="flex items-center justify-center bg-white px-4 py-1 border-[3px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                     <div className="flex items-center gap-2">
-                        <Clock size={16} className="text-yellow-500" />
-                        <span className={`text-xl font-mono font-bold ${hudState.timeLeft <= 30 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+                        <Clock size={16} className="text-black" strokeWidth={3} />
+                        <span className={`text-xl font-mono font-black ${hudState.timeLeft <= 30 ? 'text-red-600' : 'text-black'}`}>
                             {Math.floor(hudState.timeLeft)}s
                         </span>
                     </div>
@@ -109,25 +109,21 @@ const HUD: React.FC<HUDProps> = ({ hudState, onNextLevel }) => {
 
         {/* P2 Stats */}
         <div className="flex-1 flex justify-end">
-            {p2 && renderPlayerStats(p2, "PARTNER (P2)", true)}
+            {p2 && renderPlayerStats(p2, "P2 (ALLY)", true)}
         </div>
 
         {/* Level Transition Overlay */}
         {hudState.isLevelClear && (
-            <div className="absolute inset-0 top-full h-[600px] flex items-center justify-center z-50 bg-slate-900/90 backdrop-blur-sm animate-in fade-in duration-300">
-                 <div className="bg-slate-800 p-8 rounded-2xl border-4 border-slate-600 text-white text-center shadow-2xl max-w-md w-full relative overflow-hidden">
-                     {/* Decorative glow */}
-                     <div className="absolute -top-10 -left-10 w-32 h-32 bg-yellow-500/20 rounded-full blur-3xl"></div>
-                     <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
-
-                     <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 mb-2 drop-shadow-sm uppercase tracking-wider">
+            <div className="absolute inset-0 top-full h-[600px] flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
+                 <div className="bg-white p-8 border-[4px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center max-w-md w-full relative">
+                     
+                     <h2 className="text-4xl font-black text-black bg-yellow-300 border-[3px] border-black inline-block px-4 py-2 transform -rotate-2 mb-6 uppercase">
                          Stage Clear!
                      </h2>
-                     <p className="text-slate-400 text-sm mb-8 font-mono">Stage {hudState.level} Complete</p>
                      
                      {/* Stats Table */}
-                     <div className="bg-slate-900/50 rounded-xl p-4 mb-8 border border-slate-700">
-                        <div className="grid grid-cols-3 gap-4 mb-2 text-xs font-bold text-slate-500 uppercase tracking-wider pb-2 border-b border-slate-700">
+                     <div className="bg-gray-50 border-[3px] border-black p-4 mb-8">
+                        <div className="grid grid-cols-3 gap-4 mb-2 text-xs font-black text-black uppercase pb-2 border-b-2 border-black">
                             <span className="text-left">Player</span>
                             <span className="text-center">Kills</span>
                             <span className="text-right">Status</span>
@@ -135,33 +131,33 @@ const HUD: React.FC<HUDProps> = ({ hudState, onNextLevel }) => {
                         
                         {/* P1 */}
                         {p1 && (
-                            <div className="grid grid-cols-3 gap-4 py-2 items-center">
-                                <div className="flex items-center gap-2 text-blue-400 font-bold">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500"></div> P1
+                            <div className="grid grid-cols-3 gap-4 py-2 items-center border-b border-gray-300">
+                                <div className="flex items-center gap-2 text-black font-bold">
+                                    <div className="w-3 h-3 bg-blue-500 border border-black"></div> P1
                                 </div>
-                                <div className="text-center font-mono text-xl">{p1.score}</div>
-                                <div className="text-right text-xs text-green-400">ALIVE</div>
+                                <div className="text-center font-mono text-xl font-bold">{p1.score}</div>
+                                <div className="text-right text-xs font-black text-green-600 bg-green-100 border border-green-600 px-1 inline-block">ALIVE</div>
                             </div>
                         )}
                         
                         {/* P2 */}
                         {p2 && (
                             <div className="grid grid-cols-3 gap-4 py-2 items-center">
-                                <div className="flex items-center gap-2 text-red-400 font-bold">
-                                    <div className="w-2 h-2 rounded-full bg-red-500"></div> P2
+                                <div className="flex items-center gap-2 text-black font-bold">
+                                    <div className="w-3 h-3 bg-red-500 border border-black"></div> P2
                                 </div>
-                                <div className="text-center font-mono text-xl">{p2.score}</div>
-                                <div className="text-right text-xs text-green-400">ALIVE</div>
+                                <div className="text-center font-mono text-xl font-bold">{p2.score}</div>
+                                <div className="text-right text-xs font-black text-green-600 bg-green-100 border border-green-600 px-1 inline-block">ALIVE</div>
                             </div>
                         )}
                      </div>
 
                      <button 
                         onClick={onNextLevel}
-                        className="w-full group flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-xl hover:shadow-blue-500/25"
+                        className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-[#7FBC8C] hover:bg-[#68a375] border-[3px] border-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] text-black font-black text-xl transition-all"
                      >
-                         <span>Next Mission</span>
-                         <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                         <span>NEXT MISSION</span>
+                         <ArrowRight className="stroke-[3px]" />
                      </button>
                  </div>
             </div>

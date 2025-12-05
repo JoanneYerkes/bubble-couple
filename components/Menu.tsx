@@ -31,50 +31,59 @@ const Menu: React.FC<MenuProps> = ({ setMode, winner, onRestart, gameMode }) => 
 
   if (gameMode === GameMode.MENU) {
     return (
-      <div className="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-white z-50 p-8">
-        <h1 className="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-blue-500 tracking-wider filter drop-shadow-lg">
-          Bubble Couple
-        </h1>
-        <p className="mb-12 text-slate-400 text-lg">A game of bombs, bubbles, and betrayal.</p>
+      <div className="absolute inset-0 bg-[#FFDEE9] bg-gradient-to-br from-[#B5FFFC] to-[#FFDEE9] flex flex-col items-center justify-center p-8 z-50">
+        
+        {/* Title Block */}
+        <div className="mb-10 bg-white border-[4px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-[-2deg]">
+             <h1 className="text-6xl font-black text-black tracking-tight uppercase font-space">
+                Bubble Couple
+             </h1>
+             <p className="text-black font-bold mt-2 text-center text-lg border-t-2 border-black pt-2">
+                 Bombs, Bubbles & Betrayal
+             </p>
+        </div>
 
         <div className="flex gap-8 mb-12">
+          {/* PVP Button */}
           <button
             onClick={() => handleModeSelect(GameMode.PVP)}
             onMouseEnter={() => audioManager.play(SoundType.CLICK)}
-            className="group w-48 flex flex-col items-center gap-4 bg-slate-800 p-6 rounded-2xl border-2 border-slate-700 hover:border-red-500 hover:bg-slate-750 transition-all transform hover:-translate-y-1 shadow-lg"
+            className="group w-48 flex flex-col items-center gap-4 bg-[#FF6B6B] border-[3px] border-black p-6 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all"
           >
-            <Swords size={48} className="text-red-500 group-hover:scale-110 transition-transform" />
+            <Swords size={48} className="text-black stroke-[2.5px]" />
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-slate-100">PvP Mode</h3>
-              <p className="text-sm text-slate-400 mt-1">Fight your partner!</p>
+              <h3 className="text-2xl font-black text-black uppercase">PvP</h3>
+              <p className="text-xs font-bold text-black border-t-2 border-black mt-1 pt-1">Fight Partner</p>
             </div>
           </button>
 
+          {/* PVE Button */}
           <button
             onClick={() => handleModeSelect(GameMode.PVE)}
             onMouseEnter={() => audioManager.play(SoundType.CLICK)}
-            className="group w-48 flex flex-col items-center gap-4 bg-slate-800 p-6 rounded-2xl border-2 border-slate-700 hover:border-blue-500 hover:bg-slate-750 transition-all transform hover:-translate-y-1 shadow-lg"
+            className="group w-48 flex flex-col items-center gap-4 bg-[#4ECDC4] border-[3px] border-black p-6 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all"
           >
-            <HeartHandshake size={48} className="text-blue-500 group-hover:scale-110 transition-transform" />
+            <HeartHandshake size={48} className="text-black stroke-[2.5px]" />
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-slate-100">PvE Mode</h3>
-              <p className="text-sm text-slate-400 mt-1">Practice together!</p>
+              <h3 className="text-2xl font-black text-black uppercase">PvE</h3>
+              <p className="text-xs font-bold text-black border-t-2 border-black mt-1 pt-1">Co-op Mode</p>
             </div>
           </button>
         </div>
 
-        <div className="w-full max-w-lg bg-slate-800/50 p-6 rounded-xl border border-slate-700 backdrop-blur-sm">
-            <h4 className="text-center text-slate-500 uppercase tracking-widest text-xs mb-4 font-bold">How to Play</h4>
+        {/* Instructions */}
+        <div className="w-full max-w-lg bg-white border-[3px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <h4 className="text-center text-black font-black uppercase text-lg mb-4 bg-yellow-300 border-2 border-black inline-block px-2 transform -rotate-1 mx-auto block">How to Play</h4>
             <div className="grid grid-cols-2 gap-8 text-sm">
                 <div className="space-y-2">
-                    <strong className="text-blue-400 block text-base border-b border-blue-400/20 pb-1 mb-2">Player 1 (Blue)</strong>
-                    <div className="flex justify-between text-slate-300"><span>Move</span> <span className="font-mono bg-slate-700 px-1 rounded">WASD</span></div>
-                    <div className="flex justify-between text-slate-300"><span>Bomb</span> <span className="font-mono bg-slate-700 px-1 rounded">Space</span></div>
+                    <strong className="block text-black text-lg bg-blue-300 border-2 border-black text-center mb-2">P1 (Blue)</strong>
+                    <div className="flex justify-between text-black font-bold"><span>Move</span> <span className="font-mono border border-black bg-gray-100 px-1">WASD</span></div>
+                    <div className="flex justify-between text-black font-bold"><span>Bomb</span> <span className="font-mono border border-black bg-gray-100 px-1">Space</span></div>
                 </div>
                 <div className="space-y-2">
-                    <strong className="text-red-400 block text-base border-b border-red-400/20 pb-1 mb-2">Player 2 (Red)</strong>
-                    <div className="flex justify-between text-slate-300"><span>Move</span> <span className="font-mono bg-slate-700 px-1 rounded">Arrows</span></div>
-                    <div className="flex justify-between text-slate-300"><span>Bomb</span> <span className="font-mono bg-slate-700 px-1 rounded">Enter</span></div>
+                    <strong className="block text-black text-lg bg-red-300 border-2 border-black text-center mb-2">P2 (Red)</strong>
+                    <div className="flex justify-between text-black font-bold"><span>Move</span> <span className="font-mono border border-black bg-gray-100 px-1">Arrows</span></div>
+                    <div className="flex justify-between text-black font-bold"><span>Bomb</span> <span className="font-mono border border-black bg-gray-100 px-1">Enter</span></div>
                 </div>
             </div>
         </div>
@@ -84,28 +93,32 @@ const Menu: React.FC<MenuProps> = ({ setMode, winner, onRestart, gameMode }) => 
 
   if (winner !== null) {
     return (
-      <div className="absolute inset-0 bg-black bg-opacity-90 flex flex-col items-center justify-center text-white z-50 animate-in fade-in duration-500">
-        <h2 className="text-6xl font-black mb-4 tracking-tight drop-shadow-xl">
-            {winner === 0 ? <span className="text-slate-400">GAME OVER</span> : <span className={winner === 1 ? 'text-blue-500' : winner === 12 ? 'text-yellow-500' : 'text-red-500'}>{winner === 12 ? "VICTORY!" : `PLAYER ${winner} WINS!`}</span>}
-        </h2>
-        <p className="text-2xl text-slate-300 mb-10 font-light">
-            {winner === 0 ? "Better luck next time..." : winner === 12 ? "Great Teamwork!" : "Victory is sweet!"}
-        </p>
-        
-        <button 
-            onClick={handleRestartClick}
-            className="group flex items-center gap-3 px-8 py-4 bg-white text-slate-900 hover:bg-slate-200 rounded-full font-bold text-xl transition-all hover:scale-105 shadow-xl"
-        >
-            <RotateCcw className="group-hover:-rotate-180 transition-transform duration-500" /> 
-            Play Again
-        </button>
-        
-        <button 
-            onClick={handleBackToMenu}
-            className="mt-8 text-slate-500 hover:text-white transition-colors text-sm uppercase tracking-widest"
-        >
-            Back to Menu
-        </button>
+      <div className="absolute inset-0 bg-yellow-300 flex flex-col items-center justify-center p-8 z-50">
+        <div className="bg-white border-[4px] border-black p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center max-w-2xl w-full">
+            <h2 className="text-6xl font-black mb-4 uppercase text-black italic">
+                {winner === 0 ? "GAME OVER" : winner === 12 ? "VICTORY!" : `P${winner} WINS!`}
+            </h2>
+            <p className="text-2xl text-black font-bold mb-10 border-b-4 border-black inline-block pb-2">
+                {winner === 0 ? "You both died..." : winner === 12 ? "Mission Accomplished!" : "Kneel before the champion!"}
+            </p>
+            
+            <div className="flex flex-col gap-4 items-center">
+                <button 
+                    onClick={handleRestartClick}
+                    className="flex items-center gap-3 px-8 py-4 bg-[#7FBC8C] border-[3px] border-black text-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] font-black text-xl transition-all"
+                >
+                    <RotateCcw className="stroke-[3px]" /> 
+                    PLAY AGAIN
+                </button>
+                
+                <button 
+                    onClick={handleBackToMenu}
+                    className="mt-4 font-bold border-b-2 border-black hover:text-gray-600 text-black uppercase tracking-widest"
+                >
+                    Back to Menu
+                </button>
+            </div>
+        </div>
       </div>
     );
   }

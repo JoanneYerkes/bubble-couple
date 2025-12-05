@@ -27,34 +27,34 @@ const App: React.FC = () => {
     setWinner(null);
   };
 
-  // Calculate explicit dimensions to prevent layout collapse when Canvas is unmounted
+  // Calculate explicit dimensions
   const gameWidth = GRID_W * TILE_SIZE;
   const gameHeight = GRID_H * TILE_SIZE;
   const totalHeight = gameHeight + HEADER_HEIGHT;
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 font-sans select-none">
+    <div className="min-h-screen flex items-center justify-center p-4 select-none">
       {/* 
         Main Console Container
-        This holds the HUD (Top Bar) and the Game Screen (Bottom)
+        Neobrutalist Style: Thick borders, hard shadow, no rounded corners (or slight)
       */}
       <div 
-        className="relative shadow-2xl rounded-lg overflow-hidden bg-slate-800 border-4 border-slate-700 flex flex-col" 
+        className="relative bg-white border-[4px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col" 
         style={{ width: gameWidth, height: totalHeight }}
       >
-        {/* HUD Layer - Always present in game mode, sits on top physically */}
+        {/* HUD Layer */}
         {mode !== GameMode.MENU && (
            <HUD hudState={hudState} onNextLevel={proceedToNextLevel} />
         )}
         
         {/* Game Canvas Layer */}
         {mode !== GameMode.MENU && (
-           <div className="relative flex-1 bg-black">
+           <div className="relative flex-1 bg-white border-t-[4px] border-black">
              <GameCanvas gameStateRef={gameStateRef} />
            </div>
         )}
         
-        {/* Menu & Overlay Layer (Absolute on top of everything) */}
+        {/* Menu & Overlay Layer */}
         {(mode === GameMode.MENU || winner !== null) && (
             <Menu 
                 setMode={handleModeSelect} 
