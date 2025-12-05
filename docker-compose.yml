@@ -1,0 +1,11 @@
+services:
+  bubble-couple:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    container_name: bubble-couple
