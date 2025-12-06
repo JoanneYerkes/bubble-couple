@@ -71,6 +71,11 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
     }
   };
 
+  const handleTouchCancel = (direction: 'up' | 'down' | 'left' | 'right' | 'bomb') => (e: React.TouchEvent) => {
+    // Same as touch end - release the key when touch is cancelled
+    handleTouchEnd(direction)(e);
+  };
+
   // Only render on mobile
   if (!isMobile) return null;
 
@@ -85,6 +90,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
         <button
           onTouchStart={handleTouchStart('up')}
           onTouchEnd={handleTouchEnd('up')}
+          onTouchCancel={handleTouchCancel('up')}
           className={`absolute left-1/2 top-0 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
           <ArrowUp size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
@@ -93,6 +99,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
         <button
           onTouchStart={handleTouchStart('down')}
           onTouchEnd={handleTouchEnd('down')}
+          onTouchCancel={handleTouchCancel('down')}
           className={`absolute left-1/2 bottom-0 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
           <ArrowDown size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
@@ -101,6 +108,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
         <button
           onTouchStart={handleTouchStart('left')}
           onTouchEnd={handleTouchEnd('left')}
+          onTouchCancel={handleTouchCancel('left')}
           className={`absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
           <ArrowLeft size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
@@ -109,6 +117,7 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
         <button
           onTouchStart={handleTouchStart('right')}
           onTouchEnd={handleTouchEnd('right')}
+          onTouchCancel={handleTouchCancel('right')}
           className={`absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
           <ArrowRight size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
@@ -122,7 +131,8 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
         <button
           onTouchStart={handleTouchStart('bomb')}
           onTouchEnd={handleTouchEnd('bomb')}
-          className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full ${bgColor} border-3 sm:border-4 ${borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center relative`}
+          onTouchCancel={handleTouchCancel('bomb')}
+          className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full ${bgColor} border-[3px] sm:border-[4px] ${borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center relative`}
         >
           <span className="text-white font-black text-2xl sm:text-3xl">💣</span>
         </button>
