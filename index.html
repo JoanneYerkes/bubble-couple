@@ -14,6 +14,36 @@
         background-image: radial-gradient(#F59E0B 1px, transparent 1px);
         background-size: 24px 24px;
       }
+      
+      /* Mobile optimizations */
+      @media (max-width: 768px) {
+        body {
+          background-size: 16px 16px;
+        }
+        
+        #root > div {
+          padding: 0.5rem !important;
+        }
+        
+        /* Scale game container to fit mobile screens */
+        #root > div > div {
+          transform-origin: center center;
+        }
+      }
+      
+      /* Prevent pull-to-refresh on mobile */
+      body {
+        overscroll-behavior-y: contain;
+      }
+      
+      /* Prevent text selection and tap highlights on game elements */
+      body, button, canvas, #root {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
     </style>
   <script type="importmap">
 {
