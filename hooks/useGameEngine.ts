@@ -8,7 +8,7 @@ import {
   GRID_W, GRID_H, TILE_SIZE, CONTROLS, BASE_SPEED, MAX_SPEED, PLAYER_SIZE,
   BOMB_TIMER_MS, EXPLOSION_DURATION_MS, TRAPPED_DURATION_MS, 
   INVINCIBLE_DURATION_MS, CORNER_TOLERANCE,
-  GHOST_DURATION_MS, BOMB_SLIDE_SPEED, ENEMY_STATS, LEVEL_CONFIGS
+  GHOST_DURATION_MS, BOMB_SLIDE_SPEED, ENEMY_STATS, LEVEL_CONFIGS, GAMEPAD_CONFIG
 } from '../constants';
 import { createInitialGrid, isColliding, checkPlayerCollision, getGridCoords, getPixelCoords } from '../utils/gameUtils';
 import { audioManager } from '../utils/audio';
@@ -31,6 +31,10 @@ export const useGameEngine = (mode: GameMode, onGameOver: (winner: number | null
   });
 
   const inputRef = useRef<Set<string>>(new Set());
+  const gamepadStateRef = useRef<{ [key: number]: { up: boolean; down: boolean; left: boolean; right: boolean; bomb: boolean; lastBombState: boolean } }>({
+    [GAMEPAD_CONFIG.P1_INDEX]: { up: false, down: false, left: false, right: false, bomb: false, lastBombState: false },
+    [GAMEPAD_CONFIG.P2_INDEX]: { up: false, down: false, left: false, right: false, bomb: false, lastBombState: false },
+  });
   const [hudState, setHudState] = useState<GameState | null>(null); // For UI updates (lower frequency)
   const reqIdRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
@@ -231,6 +235,41 @@ export const useGameEngine = (mode: GameMode, onGameOver: (winner: number | null
     });
   };
 
+  const handleGamepadBombInput = () => {
+    const state = gameStateRef.current;
+    if (state.gameOver || state.isLevelClear) return;
+
+    state.players.forEach(p => {
+      if (p.state !== PlayerState.NORMAL) return;
+
+      const gamepadIndex = p.id === 1 ? GAMEPAD_CONFIG.P1_INDEX : GAMEPAD_CONFIG.P2_INDEX;
+      const gamepadState = gamepadStateRef.current[gamepadIndex];
+
+      if (gamepadState.bomb) {
+        if (p.activeBombs < p.maxBombs) {
+          const gridCoords = getGridCoords(p.x, p.y);
+          const exists = state.bombs.some(b => b.gridX === gridCoords.x && b.gridY === gridCoords.y);
+          if (!exists) {
+            state.bombs.push({
+              id: Math.random().toString(36),
+              ownerId: p.id,
+              gridX: gridCoords.x,
+              gridY: gridCoords.y,
+              x: gridCoords.x * TILE_SIZE,
+              y: gridCoords.y * TILE_SIZE,
+              vx: 0,
+              vy: 0,
+              range: p.bombRange,
+              timer: BOMB_TIMER_MS,
+            });
+            p.activeBombs++;
+            audioManager.play(SoundType.BOMB_PLACE);
+          }
+        }
+      }
+    });
+  };
+
   const isEntityBlocked = (nx: number, ny: number, state: GameState, entityType: 'player' | 'enemy', player?: Player, enemy?: Enemy) => {
       const epsilon = 0.1;
       const corners = [
@@ -272,6 +311,57 @@ export const useGameEngine = (mode: GameMode, onGameOver: (winner: number | null
       return false;
   };
 
+  const pollGamepads = () => {
+    const AXIS_THRESHOLD = 0.5;
+    const BUTTON_A = 0;
+    const BUTTON_B = 1;
+
+    [GAMEPAD_CONFIG.P1_INDEX, GAMEPAD_CONFIG.P2_INDEX].forEach((index) => {
+      const gamepads = navigator.getGamepads();
+      const gamepad = gamepads[index];
+
+      if (gamepad && gamepad.connected) {
+        const state = gamepadStateRef.current[index];
+        
+        // Axes: [0] = Left stick X, [1] = Left stick Y
+        const leftStickX = gamepad.axes[0] || 0;
+        const leftStickY = gamepad.axes[1] || 0;
+
+        // D-pad buttons: [12] = Up, [13] = Down, [14] = Left, [15] = Right
+        const dpadUp = gamepad.buttons[12]?.pressed || false;
+        const dpadDown = gamepad.buttons[13]?.pressed || false;
+        const dpadLeft = gamepad.buttons[14]?.pressed || false;
+        const dpadRight = gamepad.buttons[15]?.pressed || false;
+
+        // Combine D-pad and analog stick input
+        state.up = dpadUp || leftStickY < -AXIS_THRESHOLD;
+        state.down = dpadDown || leftStickY > AXIS_THRESHOLD;
+        state.left = dpadLeft || leftStickX < -AXIS_THRESHOLD;
+        state.right = dpadRight || leftStickX > AXIS_THRESHOLD;
+
+        // A or B button for bomb
+        const bombButton = gamepad.buttons[BUTTON_A]?.pressed || gamepad.buttons[BUTTON_B]?.pressed || false;
+        
+        // Detect button press edge (transition from not pressed to pressed)
+        if (bombButton && !state.lastBombState) {
+          state.bomb = true;
+        } else {
+          state.bomb = false;
+        }
+        state.lastBombState = bombButton;
+      } else {
+        // Reset input if gamepad disconnected
+        const state = gamepadStateRef.current[index];
+        state.up = false;
+        state.down = false;
+        state.left = false;
+        state.right = false;
+        state.bomb = false;
+        state.lastBombState = false;
+      }
+    });
+  };
+
   const update = (timestamp: number) => {
     if (!lastTimeRef.current) lastTimeRef.current = timestamp;
     const dt = timestamp - lastTimeRef.current;
@@ -279,6 +369,9 @@ export const useGameEngine = (mode: GameMode, onGameOver: (winner: number | null
 
     const state = gameStateRef.current;
     if (state.gameOver) return;
+    
+    // Poll gamepad input
+    pollGamepads();
     
     // Level Clear State - Pause Game Logic, Wait for UI Input
     if (state.isLevelClear) {
@@ -297,16 +390,18 @@ export const useGameEngine = (mode: GameMode, onGameOver: (winner: number | null
       const speed = p.speed;
 
       if (p.id === 1) {
-        if (inputRef.current.has(CONTROLS.P1.UP)) dy = -speed;
-        if (inputRef.current.has(CONTROLS.P1.DOWN)) dy = speed;
-        if (inputRef.current.has(CONTROLS.P1.LEFT)) dx = -speed;
-        if (inputRef.current.has(CONTROLS.P1.RIGHT)) dx = speed;
+        const gamepadState = gamepadStateRef.current[GAMEPAD_CONFIG.P1_INDEX];
+        if (inputRef.current.has(CONTROLS.P1.UP) || gamepadState.up) dy = -speed;
+        if (inputRef.current.has(CONTROLS.P1.DOWN) || gamepadState.down) dy = speed;
+        if (inputRef.current.has(CONTROLS.P1.LEFT) || gamepadState.left) dx = -speed;
+        if (inputRef.current.has(CONTROLS.P1.RIGHT) || gamepadState.right) dx = speed;
       }
       else if (p.id === 2) {
-        if (inputRef.current.has(CONTROLS.P2.UP)) dy = -speed;
-        if (inputRef.current.has(CONTROLS.P2.DOWN)) dy = speed;
-        if (inputRef.current.has(CONTROLS.P2.LEFT)) dx = -speed;
-        if (inputRef.current.has(CONTROLS.P2.RIGHT)) dx = speed;
+        const gamepadState = gamepadStateRef.current[GAMEPAD_CONFIG.P2_INDEX];
+        if (inputRef.current.has(CONTROLS.P2.UP) || gamepadState.up) dy = -speed;
+        if (inputRef.current.has(CONTROLS.P2.DOWN) || gamepadState.down) dy = speed;
+        if (inputRef.current.has(CONTROLS.P2.LEFT) || gamepadState.left) dx = -speed;
+        if (inputRef.current.has(CONTROLS.P2.RIGHT) || gamepadState.right) dx = speed;
       }
 
       if (dx !== 0 || dy !== 0) {
@@ -397,6 +492,9 @@ export const useGameEngine = (mode: GameMode, onGameOver: (winner: number | null
         delete state.items[key];
       }
     });
+
+    // Handle gamepad bomb input
+    handleGamepadBombInput();
 
     // --- 2. Enemy AI & Boss Logic ---
     if (mode === GameMode.PVE) {

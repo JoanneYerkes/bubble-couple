@@ -88,3 +88,9 @@ export const CONTROLS = {
     BOMB: 'Enter', // Or Numpad0
   }
 };
+
+// Gamepad Configuration
+export const GAMEPAD_CONFIG = {
+  P1_INDEX: 0, // First gamepad for Player 1
+  P2_INDEX: 1, // Second gamepad for Player 2
+};

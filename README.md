@@ -8,6 +8,28 @@ This is a fun bubble couple game built with React, TypeScript, and Vite.
 
 View your app in AI Studio: https://ai.studio/apps/drive/1Fqc9uDMOooISdVLuRvGoX8bi_MGlbFgm
 
+## Controls
+
+### Player 1
+**Keyboard:**
+- Movement: W, A, S, D
+- Place Bomb: Space
+
+**Gamepad (Xbox Controller):**
+- Movement: Left Stick / D-Pad
+- Place Bomb: A Button / B Button
+
+### Player 2
+**Keyboard:**
+- Movement: Arrow Keys (↑, ↓, ←, →)
+- Place Bomb: Enter / Numpad 0
+
+**Gamepad (Xbox Controller):**
+- Movement: Left Stick / D-Pad
+- Place Bomb: A Button / B Button
+
+> **Note:** Player 1 uses the first connected gamepad, and Player 2 uses the second connected gamepad. Both keyboard and gamepad controls work simultaneously!
+
 ## Run Locally
 
 **Prerequisites:**  Node.js
