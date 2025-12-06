@@ -12,11 +12,21 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
   const pressedKeys = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    // Detect mobile device
+    // Detect mobile device - must be both touch-capable AND small screen
     const checkMobile = () => {
-      return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const hasTouchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth <= 768;
+      return hasTouchSupport && isSmallScreen;
     };
+    
+    const handleResize = () => {
+      setIsMobile(checkMobile());
+    };
+    
     setIsMobile(checkMobile());
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const keyMap = playerId === 1 ? {
@@ -97,58 +107,58 @@ const TouchControls: React.FC<TouchControlsProps> = ({ playerId }) => {
   const borderColor = playerId === 1 ? 'border-blue-700' : 'border-red-700';
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[100] flex items-end justify-between p-2 sm:p-4 gap-2 sm:gap-4">
+    <div className="fixed inset-0 pointer-events-none z-[100] flex items-end justify-between px-4 pb-10 sm:px-6 sm:pb-16 gap-4">
       {/* D-Pad (Left Side) */}
-      <div className="pointer-events-auto relative w-28 h-28 sm:w-32 sm:h-32 mb-4 sm:mb-8">
+      <div className="pointer-events-auto relative w-36 h-36 sm:w-40 sm:h-40">
         {/* Up */}
         <button
           onTouchStart={handleTouchStart('up')}
           onTouchEnd={handleTouchEnd('up')}
           onTouchCancel={handleTouchCancel('up')}
-          className={`absolute left-1/2 top-0 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
+          className={`absolute left-1/2 top-0 -translate-x-1/2 w-14 h-14 sm:w-16 sm:h-16 ${bgColor} border-2 ${borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
-          <ArrowUp size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
+          <ArrowUp size={24} className="text-white sm:w-7 sm:h-7" strokeWidth={3} />
         </button>
         {/* Down */}
         <button
           onTouchStart={handleTouchStart('down')}
           onTouchEnd={handleTouchEnd('down')}
           onTouchCancel={handleTouchCancel('down')}
-          className={`absolute left-1/2 bottom-0 -translate-x-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
+          className={`absolute left-1/2 bottom-0 -translate-x-1/2 w-14 h-14 sm:w-16 sm:h-16 ${bgColor} border-2 ${borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
-          <ArrowDown size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
+          <ArrowDown size={24} className="text-white sm:w-7 sm:h-7" strokeWidth={3} />
         </button>
         {/* Left */}
         <button
           onTouchStart={handleTouchStart('left')}
           onTouchEnd={handleTouchEnd('left')}
           onTouchCancel={handleTouchCancel('left')}
-          className={`absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
+          className={`absolute left-0 top-1/2 -translate-y-1/2 w-14 h-14 sm:w-16 sm:h-16 ${bgColor} border-2 ${borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
-          <ArrowLeft size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
+          <ArrowLeft size={24} className="text-white sm:w-7 sm:h-7" strokeWidth={3} />
         </button>
         {/* Right */}
         <button
           onTouchStart={handleTouchStart('right')}
           onTouchEnd={handleTouchEnd('right')}
           onTouchCancel={handleTouchCancel('right')}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 ${bgColor} border-2 ${borderColor} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
+          className={`absolute right-0 top-1/2 -translate-y-1/2 w-14 h-14 sm:w-16 sm:h-16 ${bgColor} border-2 ${borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center`}
         >
-          <ArrowRight size={18} className="text-white sm:w-5 sm:h-5" strokeWidth={3} />
+          <ArrowRight size={24} className="text-white sm:w-7 sm:h-7" strokeWidth={3} />
         </button>
         {/* Center indicator */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 bg-white border-2 border-black rounded-full" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 bg-white border-2 border-black rounded-full" />
       </div>
 
-      {/* Bomb Button (Right Side) */}
-      <div className="pointer-events-auto mb-4 sm:mb-8">
+      {/* Bomb Button (Right Side) - aligned with D-pad center */}
+      <div className="pointer-events-auto flex items-center h-36 sm:h-40">
         <button
           onTouchStart={handleTouchStart('bomb')}
           onTouchEnd={handleTouchEnd('bomb')}
           onTouchCancel={handleTouchCancel('bomb')}
-          className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full ${bgColor} border-[3px] sm:border-[4px] ${borderColor} shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] sm:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center relative`}
+          className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full ${bgColor} border-[4px] sm:border-[5px] ${borderColor} shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] sm:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-y-[2px] flex items-center justify-center relative`}
         >
-          <span className="text-white font-black text-2xl sm:text-3xl">💣</span>
+          <span className="text-white font-black text-4xl sm:text-5xl">💣</span>
         </button>
       </div>
     </div>

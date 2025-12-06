@@ -1,16 +1,17 @@
 
 import React, { useState } from 'react';
 import { GameState, PlayerState, GameMode } from '../types';
-import { Heart, Bomb, Zap, Skull, Clock, Volume2, VolumeX, Flag, Star, Trophy, ArrowRight } from 'lucide-react';
+import { Heart, Bomb, Zap, Skull, Clock, Volume2, VolumeX, Flag, Star, Trophy, ArrowRight, LogOut } from 'lucide-react';
 import { HEADER_HEIGHT } from '../constants';
 import { audioManager } from '../utils/audio';
 
 interface HUDProps {
   hudState: GameState | null;
   onNextLevel?: () => void;
+  onExit?: () => void;
 }
 
-const HUD: React.FC<HUDProps> = ({ hudState, onNextLevel }) => {
+const HUD: React.FC<HUDProps> = ({ hudState, onNextLevel, onExit }) => {
   const [isMuted, setIsMuted] = useState(audioManager.getMuteState());
 
   const toggleMute = () => {
@@ -83,6 +84,13 @@ const HUD: React.FC<HUDProps> = ({ hudState, onNextLevel }) => {
         
         {/* Center: Timer & Controls */}
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+             <button 
+                onClick={onExit}
+                className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-red-400 hover:bg-red-500 border-[2px] sm:border-[3px] border-black active:translate-y-1 active:shadow-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"
+                title="退出游戏"
+             >
+                 <LogOut size={16} className="text-black sm:w-5 sm:h-5" />
+             </button>
              <button 
                 onClick={toggleMute}
                 className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-white border-[2px] sm:border-[3px] border-black hover:bg-gray-100 active:translate-y-1 active:shadow-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] sm:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all"

@@ -175,7 +175,14 @@ export const useGameEngine = (mode: GameMode, onGameOver: (winner: number | null
 
   // Initial Game Start
   const initGame = useCallback(() => {
+      // Cancel existing animation frame if any
+      if (reqIdRef.current) {
+        cancelAnimationFrame(reqIdRef.current);
+      }
       startLevel(1);
+      // Reset timestamp and restart game loop
+      lastTimeRef.current = 0;
+      reqIdRef.current = requestAnimationFrame(update);
   }, [startLevel]);
 
   const proceedToNextLevel = useCallback(() => {
